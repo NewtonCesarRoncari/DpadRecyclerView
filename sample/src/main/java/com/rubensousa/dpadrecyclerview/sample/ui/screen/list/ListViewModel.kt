@@ -68,5 +68,22 @@ class ListViewModel : ViewModel() {
         )
     }
 
+    fun generateListWithGrid(): MutableList<ListModel> {
+        val gridList = mutableListOf<ListModel>()
+
+        repeat(16) {
+            gridList.add(
+                ListModel(
+                    title = "DpadGrid",
+                    items = mutableListOf(1),
+                    centerAligned = false,
+                    isLeanback = true,
+                    enableLooping = false
+                )
+            )
+        }
+
+        return gridList
+    }
 
 }

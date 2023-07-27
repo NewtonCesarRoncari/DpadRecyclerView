@@ -25,6 +25,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rubensousa.dpadrecyclerview.DpadRecyclerView
+import com.rubensousa.dpadrecyclerview.DpadSpanSizeLookup
 import com.rubensousa.dpadrecyclerview.OnViewHolderSelectedListener
 import com.rubensousa.dpadrecyclerview.ParentAlignment
 import com.rubensousa.dpadrecyclerview.sample.R
@@ -37,6 +38,7 @@ import com.rubensousa.dpadrecyclerview.spacing.DpadSpacingLookup
 
 class ListFragment : Fragment(R.layout.screen_recyclerview) {
 
+    private val spanCount = 5
     private val stateHolder = DpadStateHolder()
     private var selectedPosition: Int = RecyclerView.NO_POSITION
     private val binding by viewBinding(ScreenRecyclerviewBinding::bind)
@@ -76,6 +78,8 @@ class ListFragment : Fragment(R.layout.screen_recyclerview) {
         concatAdapter.addAdapter(placeholderAdapter)
 
         viewModel.listState.observe(viewLifecycleOwner) { list ->
+            val gridList = viewModel.generateListWithGrid()
+            list.addAll(3, gridList)
             itemAdapter.submitList(list)
         }
         viewModel.loadingState.observe(viewLifecycleOwner) { isLoading ->
@@ -93,6 +97,7 @@ class ListFragment : Fragment(R.layout.screen_recyclerview) {
             if (!args.showHeader) {
                 setParentAlignment(ParentAlignment(edge = ParentAlignment.Edge.NONE))
             }
+            setSpanCount(spanCount)
             addItemDecoration(
                 DpadLinearSpacingDecoration.create(
                     itemSpacing = resources.getDimensionPixelOffset(R.dimen.grid_item_spacing),
@@ -128,6 +133,15 @@ class ListFragment : Fragment(R.layout.screen_recyclerview) {
                     }
                 )
             }
+            setSpanSizeLookup(object : DpadSpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (isItemGrid(position)) {
+                        1
+                    } else {
+                        recyclerView.getSpanCount()
+                    }
+                }
+            })
             if (selectedPosition != RecyclerView.NO_POSITION) {
                 recyclerView.setSelectedPosition(selectedPosition)
             }
@@ -148,4 +162,5 @@ class ListFragment : Fragment(R.layout.screen_recyclerview) {
         }
     }
 
+    private fun isItemGrid(position: Int) = position in 3.rangeTo(18)
 }

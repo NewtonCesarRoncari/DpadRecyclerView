@@ -19,16 +19,18 @@ package com.rubensousa.dpadrecyclerview.sample.ui.screen.list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.rubensousa.dpadrecyclerview.sample.R
 import com.rubensousa.dpadrecyclerview.sample.databinding.HorizontalAdapterListBinding
 import com.rubensousa.dpadrecyclerview.sample.ui.model.ListModel
-import com.rubensousa.dpadrecyclerview.sample.ui.model.ListTypes
 import com.rubensousa.dpadrecyclerview.sample.ui.widgets.common.MutableListAdapter
+import com.rubensousa.dpadrecyclerview.sample.ui.widgets.item.ItemViewHolder
 import com.rubensousa.dpadrecyclerview.sample.ui.widgets.list.DpadStateHolder
 
 class HorizontalListAdapter(
     private val stateHolder: DpadStateHolder,
     private val config: HorizontalListConfig
-) : MutableListAdapter<ListModel, HorizontalListViewHolder>(DIFF_CALLBACK) {
+) : MutableListAdapter<ListModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListModel>() {
@@ -42,36 +44,36 @@ class HorizontalListAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HorizontalListViewHolder {
-        return HorizontalListViewHolder(
-            HorizontalAdapterListBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent, false
-            ),
-            config
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == 1) {
+            val view =
+                LayoutInflater.from(parent.context).inflate(config.itemLayoutId, parent, false)
+            ItemViewHolder(view, view.findViewById(R.id.textView), config.animateFocusChanges)
+        } else {
+            HorizontalListViewHolder(
+                HorizontalAdapterListBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent, false
+                ),
+                config
+            )
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = getItem(position)
-        if (item.centerAligned) {
-            return ListTypes.LIST_CENTER
-        }
-        if (item.isLeanback) {
-            return ListTypes.LIST_START_LEANBACK
-        }
-        return ListTypes.LIST_START
+        return if (isItemGrid(position)) 1 else 0
     }
 
-    override fun onBindViewHolder(holder: HorizontalListViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
-        stateHolder.restore(holder.recyclerView, item.title, holder.adapter)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is HorizontalListViewHolder) {
+            val item = getItem(position)
+            holder.bind(item)
+            stateHolder.restore(holder.recyclerView, item.title, holder.adapter)
+        } else if (holder is ItemViewHolder) {
+            holder.bind(getItem(position).items.first(), null)
+        }
     }
 
-    override fun onViewRecycled(holder: HorizontalListViewHolder) {
-        stateHolder.save(holder.recyclerView)
-        holder.recycle()
-    }
+    private fun isItemGrid(position: Int) = position in 3.rangeTo(18)
 
 }
