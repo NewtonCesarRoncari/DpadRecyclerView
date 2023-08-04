@@ -30,6 +30,7 @@ import com.rubensousa.dpadrecyclerview.OnViewHolderSelectedListener
 import com.rubensousa.dpadrecyclerview.ParentAlignment
 import com.rubensousa.dpadrecyclerview.sample.R
 import com.rubensousa.dpadrecyclerview.sample.databinding.ScreenRecyclerviewBinding
+import com.rubensousa.dpadrecyclerview.sample.ui.model.Type
 import com.rubensousa.dpadrecyclerview.sample.ui.viewBinding
 import com.rubensousa.dpadrecyclerview.sample.ui.widgets.common.PlaceholderAdapter
 import com.rubensousa.dpadrecyclerview.sample.ui.widgets.list.DpadStateHolder
@@ -135,7 +136,7 @@ class ListFragment : Fragment(R.layout.screen_recyclerview) {
             }
             setSpanSizeLookup(object : DpadSpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (isItemGrid(position)) {
+                    return if (adapter?.getItemViewType(position) == Type.GRID.ordinal) {
                         1
                     } else {
                         recyclerView.getSpanCount()
@@ -152,8 +153,8 @@ class ListFragment : Fragment(R.layout.screen_recyclerview) {
                     position: Int,
                     subPosition: Int
                 ) {
-                    selectedPosition = position
-                    viewModel.loadMore(position)
+//                    selectedPosition = position
+//                    viewModel.loadMore(position)
                 }
             })
             if (args.slowScroll) {
@@ -161,6 +162,4 @@ class ListFragment : Fragment(R.layout.screen_recyclerview) {
             }
         }
     }
-
-    private fun isItemGrid(position: Int) = position in 3.rangeTo(18)
 }

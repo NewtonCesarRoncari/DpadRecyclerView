@@ -21,7 +21,8 @@ data class ListModel(
     val items: MutableList<Int>,
     val centerAligned: Boolean,
     val isLeanback: Boolean,
-    val enableLooping: Boolean = false
+    val enableLooping: Boolean = false,
+    var type: Type = Type.RAILS
 ) : ItemModel {
     override val diffId: String = title
 }

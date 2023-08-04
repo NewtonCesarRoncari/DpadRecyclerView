@@ -19,10 +19,12 @@ package com.rubensousa.dpadrecyclerview.sample.ui.screen.list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rubensousa.dpadrecyclerview.sample.R
 import com.rubensousa.dpadrecyclerview.sample.databinding.HorizontalAdapterListBinding
 import com.rubensousa.dpadrecyclerview.sample.ui.model.ListModel
+import com.rubensousa.dpadrecyclerview.sample.ui.model.Type
 import com.rubensousa.dpadrecyclerview.sample.ui.widgets.common.MutableListAdapter
 import com.rubensousa.dpadrecyclerview.sample.ui.widgets.item.ItemViewHolder
 import com.rubensousa.dpadrecyclerview.sample.ui.widgets.list.DpadStateHolder
@@ -30,7 +32,7 @@ import com.rubensousa.dpadrecyclerview.sample.ui.widgets.list.DpadStateHolder
 class HorizontalListAdapter(
     private val stateHolder: DpadStateHolder,
     private val config: HorizontalListConfig
-) : MutableListAdapter<ListModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+) : ListAdapter<ListModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListModel>() {
@@ -45,7 +47,7 @@ class HorizontalListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == 1) {
+        return if (viewType == Type.GRID.ordinal) {
             val view =
                 LayoutInflater.from(parent.context).inflate(config.itemLayoutId, parent, false)
             ItemViewHolder(view, view.findViewById(R.id.textView), config.animateFocusChanges)
@@ -61,7 +63,7 @@ class HorizontalListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (isItemGrid(position)) 1 else 0
+        return currentList[position].type.ordinal
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -74,6 +76,5 @@ class HorizontalListAdapter(
         }
     }
 
-    private fun isItemGrid(position: Int) = position in 3.rangeTo(18)
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rubensousa.dpadrecyclerview.sample.ui.model.ListModel
+import com.rubensousa.dpadrecyclerview.sample.ui.model.Type
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -78,7 +79,8 @@ class ListViewModel : ViewModel() {
                     items = mutableListOf(1),
                     centerAligned = false,
                     isLeanback = true,
-                    enableLooping = false
+                    enableLooping = false,
+                    type = Type.GRID
                 )
             )
         }
